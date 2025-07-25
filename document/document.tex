@@ -5,6 +5,9 @@
 \usepackage{graphicx}
 \usepackage{xepersian}
 \usepackage{placeins}
+\usepackage{caption}
+\usepackage{float}
+
 
 
 \newcommand{\StudentOne}{4011262134}
@@ -138,8 +141,423 @@ Path = fonts/]
 		\includegraphics[width=1\textwidth]{2-2.png}
 	\end{figure}
 	\FloatBarrier
-	
-	
-	
+\section{فاز سوم و چهارم}	
+	در فاز سوم بردار های به دست آمده از فاز قبل را طبقه بندی کردیم، سپس عملکرد دو روش رو بررسی کردیم.
+\\
+( ابتدا تلاش کردیم که نتایج فاز قبلی را ذخیره کنیم که دوباره کل کد را اجرا نکنیم ولی خطای ram system را میگرفتیم که با کاهش دیتا ست به 5000 تا این خطا رفع شد)
+\\
+برای طبقه بندی از سه مدل  \lr{random forest , linear svc , logistic regression} استفاده کردیم. شبکه عصبی را هم امتحان کردیم ولی زمان زیادی لازم داشت و نتایج بقیه مطلوب بود به همین دلیل آن را حذف کردیم. و نتایج نشان میداد که \lr{Logistic Regression}
+بهتر و پایدارتر در هر دو عمل کرده پس از نتایج آن استفاده کردیم و ماتریس سردرگمی را هم برای این مدل رسم کردیم.
+\subsection*{مقایسه مدل‌های طبقه‌بندی و تحلیل نتایج}
+
+
+\vspace{0.5cm}
+\subsection*{مقایسه کلی مدل‌ها}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{مدل} & \textbf{TF-IDF Accuracy} & \textbf{Word2Vec Accuracy} \\
+\hline
+\lr{Logistic Regression} & \lr{0.94} & \lr{0.906} \\
+\lr{Linear SVC} & \lr{0.944} &\lr{ 0.909} \\
+\lr{Random Forest} & \lr{0.921} & \lr{0.916} \\
+\hline
+\end{tabular}
+\caption*{مقایسه دقت مدل‌ها بر اساس نمایش ویژگی‌ها}
+\end{table}
+با توجه به نتایج مدل \lr{Linear SVC} بالاترین دقت را بر روی TF-IDF کسب کرده است. با این حال، مدل \lr{Logistic Regression} در هر دو نمایش عملکردی نسبتا بالا و پایدار داشته و تفاوت کمی بین دو نمایش دارد، در حالی که Linear SVC و Random Forest افت بیشتری در دقت روی Word2Vec دارند. این ثبات دلیلی بر انتخاب نهایی \lr{Logistic Regression} به عنوان مدل برتر است.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{tfidfModel.png}
+    \caption*{ نتایج مدل های طبقه بندی برای \lr{tfidf}}
+    \label{fig:yourlabel}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{word2vecModel.png}
+    \caption*{ نتایج مدل های طبقه بندی برای \lr{word2vec}}
+    \label{fig:yourlabel}
+\end{figure}
+\vspace{0.5cm}
+
+\subsection*{ تحلیل مدل و ماتریس سردرگمی}
+
+بررسی عملکرد مدل Logistic Regression
+
+\subsubsection*{Logistic Regression + TF-IDF}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{lrTfidf.png}
+    \caption*{نتایج \lr{logistic regression}برای tfidf}
+    \label{fig:yourlabel}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{tfidfConfusionMatrix.png}
+    \caption*{ماتریس سردرگمی برایtfidf }
+    \label{fig:yourlabel}
+\end{figure}
+
+\textbf{تحلیل:}
+\begin{itemize}
+
+  \item کتاب‌ها: دقت بسیار بالا (۰.۹۷) نشان می‌دهد که مدل به‌ندرت محصولات غیرکتاب را به اشتباه در این دسته قرار داده. اما recall پایین‌تر (۰.۹۱) بیانگر آن است که برخی کتاب‌ها به اشتباه در دسته‌های دیگر قرار گرفته‌اند.
+
+  \item پوشاک و لوازم جانبی: دقت و recall بالا نشان‌دهنده‌ی توانایی بالای مدل در تشخیص صحیح این دسته است.
+
+  \item الکترونیک: عبا وجود اینکه دقت و recall  کمی پایین‌تر از پوشاک هستند، مدل در تشخیص این دسته نیز موفق عمل کرده است.
+
+  \item لوازم خانگی: recall  بسیار بالا (۰.۹۷) نشان می‌دهد که مدل تقریبا همه‌ی نمونه‌های  این دسته را شناسایی کرده، اما دقت پایین‌تر (۰.۹۱) نشان‌دهنده‌ی آن است که برخی محصولات دیگر به اشتباه در این دسته قرار گرفته‌اند.
+\end{itemize}
+در مجموع:
+\begin{itemize}
+  \item مدل در دسته‌ی پوشاک و لوازم جانبی عملکرد بسیار خوبی دارد و تقریبا همه نمونه‌ها را درست تشخیص داده است.
+
+  \item در دسته‌ی کتاب‌ها، دقت بالا است اما recall کمی پایین‌تر است؛ یعنی برخی کتاب‌ها به اشتباه در دسته‌های دیگر قرار گرفته‌اند.
+
+  \item الکترونیک نیز عملکرد خوبی دارد، اما نسبت به سایر دسته‌ها کمی ضعیف‌تر است.
+
+  \item لوازم خانگی بیشترین میزان recall را دارد؛ یعنی مدل تقریباً همه‌ی نمونه‌های واقعی این دسته را شناسایی کرده است.
+  \item بیشترین اشتباه‌ها بین دسته‌های کتاب - لوازم خانگی و الکترونیک - لوازم خانگی رخ داده‌اند.
+
+  \item این اشتباه‌ها احتمالا به دلیل شباهت متنی ( ویا توصیفی) بین محصولات باشد (مثلا کتاب‌های آشپزی یا وسایل دیجیتال خانگی).
+
+  \item دسته‌ی پوشاک کمترین میزان اشتباه را دارد و مدل در تشخیص آن بسیار دقیق عمل کرده است.
+\end{itemize}
+
+\vspace{0.4cm}
+\subsubsection*{Logistic Regression + Word2Vec}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{lrWord2vec.png}
+    \caption*{نتایج \lr{logistic regression}برای tfidf}
+    \label{fig:yourlabel}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{word2vecConfusionMatrix.png}
+    \caption*{ماتریس سردرگمی برایtfidf }
+    \label{fig:yourlabel}
+\end{figure}
+
+\textbf{تحلیل:}
+\begin{itemize}
+  \item عملکرد ضعیف‌تر نسبت به TF-IDF در همه‌ی کلاس‌ها دارد.
+  \item کتاب‌ها: دقت بالا (۰.۹۵) یعنی مدل به‌ندرت محصولات غیرکتاب را به اشتباه در این دسته قرار داده. اما recall پایین‌تر (۰.۹۱) نشان می‌دهد که برخی کتاب‌ها به اشتباه در دسته‌های دیگر افتاده‌اند.
+
+\item  پوشاک: دقت و recall تقریبا برابرند، که نشان‌دهنده‌ی ثبات مدل در این دسته است.  
+
+  \item الکترونیک: ضعیف‌ترین عملکرد را دارد. هم دقت و هم recall پایین‌تر از سایر دسته‌ها هستند، که نشان می‌دهد مدل در تشخیص این دسته دچار سردرگمی است.
+
+  \item لوازم خانگی: recall بالا (۰.۹۲) یعنی مدل بیشتر نمونه‌های  این دسته را شناسایی کرده، اما دقت پایین‌تر (۰.۸۸) نشان می‌دهد که برخی محصولات دیگر به اشتباه در این دسته قرار گرفته‌اند.
+\end{itemize}
+در مجموع:
+\begin{itemize}
+  \item مدل در دسته‌ی کتاب‌ها عملکرد بسیار خوبی دارد؛ دقت بالا و recall مناسب.
+
+\item  پوشاک و لوازم جانبی نیز با دقت و recall نزدیک به هم، عملکردی پایدار دارد.  
+  \item الکترونیک ضعیف‌ترین عملکرد را دارد، به‌ویژه در recall، که نشان‌دهنده‌ی اشتباه در تشخیص برخی نمونه‌هاست.
+
+  \item لوازم خانگی با وجود دقت پایین‌تر، recall بالایی دارد؛ یعنی مدل بیشتر نمونه‌های واقعی این دسته را شناسایی کرده است.
+  \item بیشترین اشتباه‌ها بین دسته‌های الکترونیک - لوازم خانگی و پوشاک - لوازم خانگی رخ داده‌اند.
+
+  \item دسته‌ی الکترونیک بیشترین میزان اشتباه را دارد، که ممکن است به دلیل شباهت‌های متنی یا توصیفی با لوازم خانگی باشد.
+
+  \item دسته‌ی کتاب‌ها همچنان با دقت بالا تشخیص داده می‌شود، اما چند مورد به اشتباه در دسته‌های دیگر قرار گرفته‌اند.
+
+\end{itemize}
+
+\vspace{0.5cm}
+
+در کل TF-IDF نسبت به word2vec بهتر عمل کرده است.
+چون Word2Vec بیشتر اطلاعات معنایی را حمل می‌کند، اما به خوبی TF-IDF ویژگی‌های خاص متن را برای دسته‌بندی استخراج نمی‌کند (مگر اینکه context بسیار قوی باشد). 
+Word2Vec در این مسئله خاص (با متن‌های کوتاه) کارایی کمتری نسبت به TF-IDF داشت.
+
+برای متن‌هایی که معنی در ساختار جمله مهم‌تره (مثل مکالمه یا ترجمه)، Word2Vec ممکنه بهتر باشه.
+
+الگوریتم‌های ساده‌تری مثل Logistic و SVC برای مسائل با داده زیاد و ویژگی زیاد (مثل TF-IDF) عملکرد بهتری دارن.
+TF-IDF گزینه‌ی بهتر و دقیق‌تری است، چون ویژگی‌های آماری سطح کلمه را بهتر استخراج می‌کند و برای الگوریتم‌هایی مثل SVM و Logistic Regression بهینه‌تر است.
+
+در حالی که Word2Vec برای کاربردهایی که درک معنایی و شباهت بین واژه‌ها اهمیت دارد، مناسب‌تر است، نه لزوماً طبقه‌بندی کلاسیک.
+
+\subsection*{نشان دادن بردار ها و چند مستند نمونه}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{word2vec.png}
+    \label{fig:yourlabel}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{tfidf.png}
+    \label{fig:yourlabel}
+\end{figure}
+بردار های word2vec جداپذیر تر به نظر می رسد به صورت خوشه ای پراکنده شده اند کمی خطا هم دیده می شود که نسبت به تعداد داده ها قابل چشم پوشی است. بردار های tfidf به نظر شلوغ تر میرسد اما دقت بهتری دارد، که ممکن است به این دلیل باشد که برای نشان دادن داده ها بر روی 2 بعد کاهش ابعاد انجام شده ( ابعاد tfidf بسیار زیاد بوده است) و  این کاهش ابعاد باعث شده است که به این شکل دیده شود ( یعنی در بعد های بالاتر جدا پذیر هستند)
+\\
+چون word2vec برحست اطلاعات معنایی است از نزدیک بودن دسته ها به همدیگر می توان شباهت معنایی بین دسته ها را فهمید مثلا اینکه وسایل خانگی بین لباس ها و لوازم الکترونیک است و کتاب از بقیه دسته ها دور است.
+\subsection*{نشان دادن بردار ها و چند مستند نمونه- tfidf}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{vectorsTfidf.png}
+    \label{fig:yourlabel}
+\end{figure}
+\lr{ 
+Predicted Class: Clothing \& Accessories
+\\
+Document 0
+\\
+Text: Diverse Men's Formal Shirt Diverse is a western wear value brand for men. Our range consists of basic and updated basic apparel across both formal and casual wear. We offer the right blend of quality, style and value aimed to delight our customers.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories
+\\
+\\
+Document 1
+\\
+Text: Jack's Star Soft Cotton Track Pants for Kids Infants \& Toddler - Lowers/Joggers for Boys and Girls with Bottom Ribs- Pack of 5\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\Document 9\\
+Text: ROOLIUMS Ã‚ Brand Factory Outlet Women's Girls Stripe Tights for Yoga Gym and Active Sports Fitness\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\ Document 10\\
+Text: AAKRITHI Women Formal Blazer Aakrithi comes with its trendy dynamic fitting women Blazer with its unmatchable comfort level and unique colour combination which provide the feel of uniqueness and comfortness to its owner. Aakrithi have designed this women Blazer taking care the needs of its customer in mind. Aakrithi never compromises with the quality of products. Aakrithi is one of the biggest women Blazer Brand in India that provide high quality women Blazer at very Reasonable And affordable Cost.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\Document 12\\
+Text: New Era Women's Polyester Taping Rain Coat (Black, XL) Treated to resist rain-and-stains, this sleek trench provides style, protection and comfort on chilly days.raincoat newera raincoat branded raincoat waterproof raincoat long rainwear for women/raincoat for women in rain coat for women/raincoats for women.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\\\Predicted Class: Books\\
+\\Document 2\\
+Text: UGC/NET/JRF/SET English Literature (Paper-II And III) UGC Pol Sci useful for DSSB KVS JNU etc\\
+True Label: Books\\
+Predicted Label: Books\\
+\\Document 7\\
+Text: Pharmacology for Dentistry About the Author Tara V Shanbhag is Professor and Head at the Department of Pharmacology, Srinivas Institute of Medical Sciences and Research Centre, Mukka, Mangalore, Karnataka, India. She has a teaching experience of more than 30 years and has been an examiner to various universities. Dr Shanbhag is an honourable recipient of the ‘Good Teacher’ award. She has authored books on pharmacology and has to her credit several articles in national and international journals. Smita Shenoy is Additional Professor at the Department of Pharmacology, Kasturba Medical College, Manipal University, Manipal, Karnataka, India. She has 13 years of teaching experience and has been an examiner to various universities. Dr Shenoy has been honoured with the ‘Good Teacher’ award. She has authored books on pharmacology and has published several articles in national and international journals. Veena Nayak is Associate Professor at the Department of Pharmacology, Kasturba Medical College, Manipal University, Manipal, Karnataka, India. She has 10 years of teaching experience and has been an examiner to various universities. She is also a faculty and resource person at the Department of Medical Education, Kasturba Medical College, Manipal University, Manipal. She has authored books on pharmacology. Dr. Nayak has obtained ICMR grant for research and has published several articles in national and international journals.\\
+True Label: Books\\
+Predicted Label: Books\\
+\\Document 8\\
+Text: NOVICZ Skating Board Skate Board\\
+True Label: Books\\
+Predicted Label: Books\\
+\\ Document 13\\
+Text: UP Police Constable : Practice Test Papers and Previous Papers (Solved) (Old Edition)\\
+True Label: Books\\
+Predicted Label: Books\\
+\\ Document 27\\
+Text: English English Dictionary  (Hb): English Word - Its Meaning In English Along with Sentence \\
+True Label: Books\\
+Predicted Label: Books\\
+\\\\ Predicted Class: Electronics\\
+\\Document 3\\
+Text: MAA-KU AC Axial Cooling Blower Exhaust Rotary Fan, Size : 4.75" inches (12 x 12 x 3.8 cm), Black\\
+True Label: Household\\
+Predicted Label: Electronics\\
+\\ Document 6\\
+Text: Zoook Rocker Thunder 20 watts Bluetooth Speaker with Karaoke Mic/TF/FM/LED/USB/Party Speaker Zoook has upped its game again with the new rocker thunder. Rocker thunder brings together style, creativity and function. This portable sound machi is perfect for those summer time beach days. With the built-in Bluetooth capability, FM radio, aux-in, mic-in, usb and micro-SD inputs. You can enjoy music anyway want. Don't worry about a power outlet. The built-in rechargeable lithium battery allows you to listen to music for hours. Included microphone gets your karaoke nights started\\
+True Label: Electronics\\
+Predicted Label: Electronics\\
+\\ Document 15\\
+Text: Myra® TouYinGer X7 Led Projector 1800 Lumens, 800*600 HDMI USB VGA TV Home Cinema, Support Red \& Blue 3D Format Resolution: Native : 800x600 support 720p 1080p, Brightness: 1800 Lumens, Contrast ratio: 1000:1, Lens: F=126 mm(Manual focusing), Multimedia Interface: 1*VGA,1*USB,1*SD,1*HDMI,1*3.5mm Audio port,1*AV,1*TV, Lamp: LED lamp;20000 hours, Displayable colours: 16.7K, Projection Method: Front, Rear Celling Mount, Table top, Image Zoom: Electronic horizontal and vertical flip; image zoom, Keystone Correction: ±12 vertical, manual keystone correction, Projection Screen Size (inch): 37-130 inch, Projection Distance (m): 1.2-3.8 meter, Aspect Ratio: 16:9 Native, 4:3 compatible; Audio Formats: MP3,WMA, AAC, Video Formats: MPEG1,MPEG2, MPEG4, H264,RM,RMVB,MOV,MJPEG,VC1,DIVX,FLV, Picture Formats: JPEG ,BMP ,PNG, Power Supply: AC110V~ 240V 50Hz/60Hz, Technology Type: TFT- Single LCD Panel + LED Technology, Dimension: 212mm*150mm*78m Important Note For better result use in dark place no light, AC3 Audio not support, best result upto 80 inch, Not recommended for Office presentation and Educational use. USB support only Pendrive not hard disk and phone\\
+True Label: Electronics\\
+Predicted Label: Electronics\\
+\\ Document 18\\
+Text: Canon Pixma G3000 All-in-One Wireless Ink Tank Colour Printer P-S-copy, 8.8ipm (mono), 5.0ipm (color), 4800dpi x 1200dpi, 6000 pages print black and 7000 pages print color with additional two balck ink bottle and WI-FI.\\
+True Label: Electronics\\
+Predicted Label: Electronics\\
+\\ Document 25\\
+Text: Yamaha PSR-E-363 61-Key Touch Sensitive Portable Keyboard Size:E363   Touch-sensitive keys allow expressive dynamic control Play the keys heavily and you'll get louder tones, or play softly to achieve quieter sounds. The touch-sensitive keyboard will accurately reflect every nuance of your playing, making your performances musically expressive.\\
+True Label: Electronics\\
+Predicted Label: Electronics\\
+\\\\ Predicted Class: Household\\
+\\ Document 4\\
+Text: Generic Super Soft Sheep Faux Fur Hairy Washable Pillow Chair Carpet Rugs Mat Specification: Ideal as a rug or draped across your favorite armchair. High quality floor carpets, also perfect for home decor. Suitable to use on tiles, wooden and laminate floors. Add a beautiful touch to any room in your home. Type: Rug Material: Imitation Wool Occasions: Bedroom, Dinning Room, Office, Living Room Features: Soft, Warm, Anti-Slip Size: 60cm x 90cm/23.62" x 35.43" (Approx.) Notes: Due to the light and screen setting difference, the item's color may be slightly different from the pictures. Please allow slight dimension difference due to different manual measurement. Package Includes: 1 x Rug\\
+True Label: Household\\
+Predicted Label: Household\\
+\\Document 5\\
+Text: AmazonBasics 16 Piece Wood Suit Hanger, Cherry Size:16 Piece   Solid wood construction to hold your heaviest clothes;Designed with a chrome swivel hook;Precisely cut notches on each end allow for hanging straps;Product Dimensions: 17.4 x 0.5 x 9.4 inches (LxWxH);1-Year Limited Warranty.\\
+True Label: Household\\
+Predicted Label: Household\\
+\\Document 11\\
+Text: Coleman Instant Canopy Sunwall - Accessory Only Please Note: This is for the sidewall attachment ONLY. The 12' x 12' canopy is NOT included with the purchase of this item Get more shade and weather protection outdoors with the Coleman Sunwall Instant Canopy Accessory. Made with UV GuardTM coating on the canopy material for superior defense against the sun, its durable construction will also stand up to the wind. It's compatible with 12 x 12 ft. straight-leg ColemanÂ Instant Canopies (NOT included). The Coleman Sunwall Instant Canopy Accessory is ideal for sporting events, birthdays, picnics and much more. This canopy sunwall is easy to move and place where you need it most. It helps to protect you and your guests against the wind, rain and sun, and it also offers privacy. We are an Authorized Coleman Dealer!\\
+True Label: Household\\
+Predicted Label: Household\\
+\\Document 14\\
+Text: Ajanta Royal Drop-Down 3 - 5 x 7 Photo Frame (Brown Metalic) : A-55 Material - Premium Quality Of Synthetic Wood.It`S A Graceful Drop Down Frame For The Beauty Of Your Home Wall And Also Specially For The Columns(Pillars) For Interior.Photo Size - 3 - 5" X 7"Inch And Each Frame Outer Size 8.75" X 6.75" Inch, On Wall Aprox. 0.75 Feet X 2 Feet.Box Content : 1-Set Of 3 Photo Frame.It`S A Unique One With Exclusive Quality\\
+True Label: Household\\
+Predicted Label: Household\\
+\\Document 16\\
+Text: Joyful Studio Plastic Modular Drawer System, (Studio XL 4) Size:Studio XL 4   Multipurpose Storage System Studio Modular Drawer System from Joyful. The trendy colors add a touch of creative Elegance While organizing your stuff. It's use is only limited to your imagination  Easy to assemble modular design Convenient to use Ample of space to organize in each drawer Great looks\\
+True Label: Household\\
+Predicted Label: Household\\
+}
+تحلیل:
+\begin{itemize}
+  \item دسته‌بندی پیش‌بینی‌شده: کتاب‌ها (Books)\\
+مدل در این دسته عملکرد قابل قبولی داشته و توانسته متون آموزشی، کتاب‌های آزمون، و منابع علمی را به‌درستی تشخیص دهد.
+\\
+نمونه‌هایی مثل: UGC/NET/JRF/SET English Literature و Pharmacology for Dentistry به‌وضوح محتوای آموزشی دارند و مدل به‌درستی آن‌ها را در دسته‌ی کتاب‌ها قرار داده است.
+\\
+سند شماره ۸ با عنوان NOVICZ Skating Board به نظر کتاب نباشد. با اینکه مدل آن را به‌عنوان کتاب دسته‌بندی کرده، احتمالا به دلیل وجود واژگان مشترک یا داده‌ی ناقص این اشتباه رخ داده است.
+\\
+  \item دسته‌بندی پیش‌بینی‌شده: پوشاک و لوازم جانبی  \lr{(Clothing \& Accessories)}\\
+مدل در این دسته عملکرد بسیار خوبی داشته و همه‌ی نمونه‌ها را به‌درستی تشخیص داده است.
+\\
+نمونه‌هایی مثل: Men's Formal Shirt، Track Pants for Kids، Women's Blazer و Rain Coat همگی دارای توصیفاتی مرتبط با پوشاک هستند و مدل به‌درستی آن‌ها را دسته‌بندی کرده است.
+\\\
+
+  \item دسته‌بندی پیش‌بینی‌شده: الکترونیک (Electronics)\\
+مدل در این دسته عملکرد نسبتا خوب داشته، اما یک مورد اشتباه وجود دارد.
+\\
+نمونه‌هایی مثل: Bluetooth Speaker، LED Projector، Wireless Printer و Portable Keyboard همگی دارای مشخصات فنی و واژگان تخصصی مرتبط با الکترونیک هستند و مدل به‌درستی آن‌ها را تشخیص داده است.
+\\
+سند شماره ۳ مربوط به Cooling Blower Fan است که برچسب واقعی آن لوازم خانگی بوده، اما مدل آن را به‌عنوان الکترونیک دسته‌بندی کرده. این اشتباه ممکن است به دلیل شباهت عملکردی یا واژگان مشترک باشد.
+\\
+  \item دسته‌بندی پیش‌بینی‌شده: لوازم خانگی (Household)\\
+مدل در این دسته نیز عملکرد خوبی داشته و همه‌ی نمونه‌ها را به‌درستی دسته‌بندی کرده است.
+\\
+نمونه‌هایی مثل: پادری خزدار، چوب‌لباسی چوبی، دیوارپوش آفتاب‌گیر، قاب عکس، کشوی پلاستیکی همگی محصولات خانگی هستند و مدل به‌درستی آن‌ها را تشخیص داده است.
+
+\end{itemize}
+\subsection*{نشان دادن بردار ها و چند مستند نمونه- word2vec}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{vectorsWord2vec.png}
+    \label{fig:yourlabel}
+\end{figure}
+\lr{ 
+Predicted Class: Books
+\\
+\\ Document 2\\
+Text: UGC/NET/JRF/SET English Literature (Paper-II And III) UGC Pol Sci useful for DSSB KVS JNU etc\\
+True Label: Books\\
+Predicted Label: Books\\
+\\
+\\ Document 7\\
+Text: Pharmacology for Dentistry About the Author Tara V Shanbhag is Professor and Head at the Department of Pharmacology, Srinivas Institute of Medical Sciences and Research Centre, Mukka, Mangalore, Karnataka, India. She has a teaching experience of more than 30 years and has been an examiner to various universities. Dr Shanbhag is an honourable recipient of the ‘Good Teacher’ award. She has authored books on pharmacology and has to her credit several articles in national and international journals. Smita Shenoy is Additional Professor at the Department of Pharmacology, Kasturba Medical College, Manipal University, Manipal, Karnataka, India. She has 13 years of teaching experience and has been an examiner to various universities. Dr Shenoy has been honoured with the ‘Good Teacher’ award. She has authored books on pharmacology and has published several articles in national and international journals. Veena Nayak is Associate Professor at the Department of Pharmacology, Kasturba Medical College, Manipal University, Manipal, Karnataka, India. She has 10 years of teaching experience and has been an examiner to various universities. She is also a faculty and resource person at the Department of Medical Education, Kasturba Medical College, Manipal University, Manipal. She has authored books on pharmacology. Dr. Nayak has obtained ICMR grant for research and has published several articles in national and international journals.\\
+True Label: Books\\
+Predicted Label: Books
+\\
+\\ Document 8\\
+Text: NOVICZ Skating Board Skate Board\\
+True Label: Books\\
+Predicted Label: Books\\
+\\Document 13\\
+Text: UP Police Constable : Practice Test Papers and Previous Papers (Solved) (Old Edition)\\
+True Label: Books\\
+Predicted Label: Books
+\\
+\\ Document 27\\
+Text: English English Dictionary  (Hb): English Word - Its Meaning In English Along with Sentence \\
+True Label: Books\\
+Predicted Label: Books\\
+\\\\\ Predicted Class: Clothing \& Accessorie\\
+\\ Document 0\\
+Text: Diverse Men's Formal Shirt Diverse is a western wear value brand for men. Our range consists of basic and updated basic apparel across both formal and casual wear. We offer the right blend of quality, style and value aimed to delight our customers.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\Document 1\\
+Text: Jack's Star Soft Cotton Track Pants for Kids Infants \& Toddler - Lowers/Joggers for Boys and Girls with Bottom Ribs- Pack of 5\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories\\
+\\ Document 9\\
+Text: ROOLIUMS Ã‚ Brand Factory Outlet Women's Girls Stripe Tights for Yoga Gym and Active Sports Fitness\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories
+\\
+\\Document 10\\
+Text: AAKRITHI Women Formal Blazer Aakrithi comes with its trendy dynamic fitting women Blazer with its unmatchable comfort level and unique colour combination which provide the feel of uniqueness and comfortness to its owner. Aakrithi have designed this women Blazer taking care the needs of its customer in mind. Aakrithi never compromises with the quality of products. Aakrithi is one of the biggest women Blazer Brand in India that provide high quality women Blazer at very Reasonable And affordable Cost.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories
+\\
+\\Document 12\\
+Text: New Era Women's Polyester Taping Rain Coat (Black, XL) Treated to resist rain-and-stains, this sleek trench provides style, protection and comfort on chilly days.raincoat newera raincoat branded raincoat waterproof raincoat long rainwear for women/raincoat for women in rain coat for women/raincoats for women.\\
+True Label: Clothing \& Accessories\\
+Predicted Label: Clothing \& Accessories
+\\
+\\\\ Predicted Class: Electronics\\
+\\ Document 3\\
+Text: MAA-KU AC Axial Cooling Blower Exhaust Rotary Fan, Size : 4.75" inches (12 x 12 x 3.8 cm), Black\\
+True Label: Household\\
+Predicted Label: Electronics
+\\
+\\ Document 6\\
+Text: Zoook Rocker Thunder 20 watts Bluetooth Speaker with Karaoke Mic/TF/FM/LED/USB/Party Speaker Zoook has upped its game again with the new rocker thunder. Rocker thunder brings together style, creativity and function. This portable sound machi is perfect for those summer time beach days. With the built-in Bluetooth capability, FM radio, aux-in, mic-in, usb and micro-SD inputs. You can enjoy music anyway want. Don't worry about a power outlet. The built-in rechargeable lithium battery allows you to listen to music for hours. Included microphone gets your karaoke nights started\\
+True Label: Electronics\\
+Predicted Label: Electronics
+\\
+\\ Document 15\\
+Text: Myra® TouYinGer X7 Led Projector 1800 Lumens, 800*600 HDMI USB VGA TV Home Cinema, Support Red \& Blue 3D Format Resolution: Native : 800x600 support 720p 1080p, Brightness: 1800 Lumens, Contrast ratio: 1000:1, Lens: F=126 mm(Manual focusing), Multimedia Interface: 1*VGA,1*USB,1*SD,1*HDMI,1*3.5mm Audio port,1*AV,1*TV, Lamp: LED lamp;20000 hours, Displayable colours: 16.7K, Projection Method: Front, Rear Celling Mount, Table top, Image Zoom: Electronic horizontal and vertical flip; image zoom, Keystone Correction: ±12 vertical, manual keystone correction, Projection Screen Size (inch): 37-130 inch, Projection Distance (m): 1.2-3.8 meter, Aspect Ratio: 16:9 Native, 4:3 compatible; Audio Formats: MP3,WMA, AAC, Video Formats: MPEG1,MPEG2, MPEG4, H264,RM,RMVB,MOV,MJPEG,VC1,DIVX,FLV, Picture Formats: JPEG ,BMP ,PNG, Power Supply: AC110V~ 240V 50Hz/60Hz, Technology Type: TFT- Single LCD Panel + LED Technology, Dimension: 212mm*150mm*78m Important Note For better result use in dark place no light, AC3 Audio not support, best result upto 80 inch, Not recommended for Office presentation and Educational use. USB support only Pendrive not hard disk and phone\\
+True Label: Electronics\\
+Predicted Label: Electronics\\
+\\ Document 18\\
+Text: Canon Pixma G3000 All-in-One Wireless Ink Tank Colour Printer P-S-copy, 8.8ipm (mono), 5.0ipm (color), 4800dpi x 1200dpi, 6000 pages print black and 7000 pages print color with additional two balck ink bottle and WI-FI.\
+True Label: Electronics\\
+Predicted Label: Electronics
+\\
+\\Document 25\\
+Text: Yamaha PSR-E-363 61-Key Touch Sensitive Portable Keyboard Size:E363   Touch-sensitive keys allow expressive dynamic control Play the keys heavily and you'll get louder tones, or play softly to achieve quieter sounds. The touch-sensitive keyboard will accurately reflect every nuance of your playing, making your performances musically expressive.\\
+True Label: Electronics\\
+Predicted Label: Electronics
+\\
+\\\\Predicted Class: Household\\
+\\ Document 4\\
+Text: Generic Super Soft Sheep Faux Fur Hairy Washable Pillow Chair Carpet Rugs Mat Specification: Ideal as a rug or draped across your favorite armchair. High quality floor carpets, also perfect for home decor. Suitable to use on tiles, wooden and laminate floors. Add a beautiful touch to any room in your home. Type: Rug Material: Imitation Wool Occasions: Bedroom, Dinning Room, Office, Living Room Features: Soft, Warm, Anti-Slip Size: 60cm x 90cm/23.62" x 35.43" (Approx.) Notes: Due to the light and screen setting difference, the item's color may be slightly different from the pictures. Please allow slight dimension difference due to different manual measurement. Package Includes: 1 x Rug\\
+True Label: Household\\
+Predicted Label: Household
+\\
+\\Document 5\\
+Text: AmazonBasics 16 Piece Wood Suit Hanger, Cherry Size:16 Piece   Solid wood construction to hold your heaviest clothes;Designed with a chrome swivel hook;Precisely cut notches on each end allow for hanging straps;Product Dimensions: 17.4 x 0.5 x 9.4 inches (LxWxH);1-Year Limited Warranty.\\
+True Label: Household\\
+Predicted Label: Household\\
+\\ Document 11\\
+Text: Coleman Instant Canopy Sunwall - Accessory Only Please Note: This is for the sidewall attachment ONLY. The 12' x 12' canopy is NOT included with the purchase of this item Get more shade and weather protection outdoors with the Coleman Sunwall Instant Canopy Accessory. Made with UV GuardTM coating on the canopy material for superior defense against the sun, its durable construction will also stand up to the wind. It's compatible with 12 x 12 ft. straight-leg ColemanÂ Instant Canopies (NOT included). The Coleman Sunwall Instant Canopy Accessory is ideal for sporting events, birthdays, picnics and much more. This canopy sunwall is easy to move and place where you need it most. It helps to protect you and your guests against the wind, rain and sun, and it also offers privacy. We are an Authorized Coleman Dealer!\\
+True Label: Household\\
+Predicted Label: Household\\
+\\Document 14\\
+Text: Ajanta Royal Drop-Down 3 - 5 x 7 Photo Frame (Brown Metalic) : A-55 Material - Premium Quality Of Synthetic Wood.It`S A Graceful Drop Down Frame For The Beauty Of Your Home Wall And Also Specially For The Columns(Pillars) For Interior.Photo Size - 3 - 5" X 7"Inch And Each Frame Outer Size 8.75" X 6.75" Inch, On Wall Aprox. 0.75 Feet X 2 Feet.Box Content : 1-Set Of 3 Photo Frame.It`S A Unique One With Exclusive Quality\\
+True Label: Household\\
+Predicted Label: Household
+\\
+\\ Document 16\\
+Text: Joyful Studio Plastic Modular Drawer System, (Studio XL 4) Size:Studio XL 4   Multipurpose Storage System Studio Modular Drawer System from Joyful. The trendy colors add a touch of creative Elegance While organizing your stuff. It's use is only limited to your imagination  Easy to assemble modular design Convenient to use Ample of space to organize in each drawer Great looks\\
+True Label: Household\\
+Predicted Label: Household\\
+}
+تحلیل:
+\begin{itemize}
+  \item دسته‌بندی پیش‌بینی‌شده: کتاب‌ها (Books)\\
+مدل در این دسته عملکرد قابل قبولی داشته و توانسته متون آموزشی، کتاب‌های آزمون، و منابع علمی را به‌درستی تشخیص دهد.
+\\
+نمونه‌هایی مثل: \textit{UGC/NET/JRF/SET English Literature} و \textit{Pharmacology for Dentistry} به‌وضوح محتوای آموزشی دارند و مدل به‌درستی آن‌ها را در دسته‌ی کتاب‌ها قرار داده است.
+\\
+سند شماره ۸ با عنوان \textit{NOVICZ Skating Board} به نظر کتاب نباشد. با اینکه مدل آن را به‌عنوان کتاب دسته‌بندی کرده، احتمالا به دلیل وجود واژگان مشترک یا داده‌ی ناقص این اشتباه رخ داده است. یا خطایی در برچسب‌گذاری داده‌های آموزشی باشد.
+\\
+
+  \item دسته‌بندی پیش‌بینی‌شده: پوشاک و لوازم جانبی \lr{(Clothing \& Accessories)}\\
+مدل در این دسته عملکرد بسیار خوبی داشته و همه‌ی نمونه‌ها را به‌درستی تشخیص داده است.
+\\
+نمونه‌هایی مثل: \textit{Men's Formal Shirt}، \textit{Track Pants for Kids}، \textit{Women's Blazer} و \textit{Rain Coat} همگی دارای توصیفاتی مرتبط با پوشاک هستند و مدل به‌درستی آن‌ها را دسته‌بندی کرده است.
+\\
+
+  \item دسته‌بندی پیش‌بینی‌شده: الکترونیک (Electronics)\\
+مدل در این دسته عملکرد نسبتاً خوب داشته، اما یک مورد اشتباه وجود دارد.
+\\
+نمونه‌هایی مثل: \textit{Bluetooth Speaker}، \textit{LED Projector}، \textit{Wireless Printer} و \textit{Portable Keyboard} همگی دارای مشخصات فنی و واژگان تخصصی مرتبط با الکترونیک هستند و مدل به‌درستی آن‌ها را تشخیص داده است.
+\\
+سند شماره ۳ مربوط به \textit{Cooling Blower Fan} است که برچسب واقعی آن «لوازم خانگی» بوده، اما مدل آن را به‌عنوان «الکترونیک» دسته‌بندی کرده. این اشتباه ممکن است به دلیل شباهت عملکردی یا واژگان مشترک بین فن‌های صنعتی و تجهیزات الکترونیکی رخ داده باشد.
+\\
+
+  \item دسته‌بندی پیش‌بینی‌شده: لوازم خانگی (Household)\\
+مدل در این دسته نیز عملکرد خوبی داشته و همه‌ی نمونه‌ها را به‌درستی دسته‌بندی کرده است.
+\\
+نمونه‌هایی مثل: \textit{پادری خزدار}، \textit{چوب‌لباسی چوبی}، \textit{دیوارپوش آفتاب‌گیر}، \textit{قاب عکس}، و \textit{کشوی پلاستیکی} همگی محصولات خانگی هستند و مدل به‌درستی آن‌ها را تشخیص داده است.
+\\
+\end{itemize}
+
 
 \end{document}
